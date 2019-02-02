@@ -6,6 +6,7 @@ import (
 	"os"
 	"reflect"
 	"regexp"
+	"sync"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -21,6 +22,7 @@ type Suite struct {
 	*assert.Assertions
 	require *require.Assertions
 	t       *testing.T
+	tLock   sync.Mutex
 }
 
 // T retrieves the current *testing.T context.
@@ -30,6 +32,8 @@ func (suite *Suite) T() *testing.T {
 
 // SetT sets the current *testing.T context.
 func (suite *Suite) SetT(t *testing.T) {
+	suite.tLock.Lock()
+	defer suite.tLock.Unlock()
 	suite.t = t
 	suite.Assertions = assert.New(t)
 	suite.require = require.New(t)
