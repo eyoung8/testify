@@ -141,9 +141,12 @@ func runTests(t testing.TB, tests []testing.InternalTest) {
 		return
 	}
 
-	for _, test := range tests {
-		r.Run(test.Name, test.F)
-	}
+	r.Run("-", func(t *testing.T) {
+		for _, test := range tests {
+			test := test
+			t.Run(test.Name, test.F)
+		}
+	})
 }
 
 // Filtering method according to set regular expression
